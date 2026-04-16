@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { SkeletonLoader } from '@/components/ui/SkeletonLoader';
 import { motion } from 'framer-motion';
 import { Search, Plane, Calendar, User, MapPin } from 'lucide-react';
 import Link from 'next/link';
@@ -39,10 +40,32 @@ export default function FlightsPage() {
         passengers: 1,
         cabin: 'Economy'
     });
+    const [flights, setFlights] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [searchCount, setSearchCount] = useState(16);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // Search logic here
+        setLoading(true);
+        try {
+            const params = new URLSearchParams({
+                from: formData.from,
+                to: formData.to,
+                departureDate: formData.departure || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10),
+                returnDate: formData.return,
+                adults: formData.passengers.toString(),
+                max: '12'
+            });
+            const res = await fetch(`/api/tourism/flights/search?${params}`);
+            const data = await res.json();
+            setFlights(data.flights || []);
+            setSearchCount(data.flights?.length || 0);
+        } catch (error) {
+            console.error('Flight search error:', error);
+            setFlights([]);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const tzsRate = 2650; // USD to TZS
@@ -197,9 +220,7 @@ export default function FlightsPage() {
                             <h2 className="text-3xl font-black text-slate-900 mb-2">
                                 Available Flights
                             </h2>
-                            <p className="text-xl text-slate-600">
-                                16 flights found • Best prices first
-                            </p>
+                            {searchCount} flights found • Best prices first {flights.length === 0 && ' (Amadeus API ready - add keys to .env.local)'}
                         </div>
                         <div className="flex space-x-3">
                             <button className="px-4 py-2 border border-slate-300 rounded-xl hover:bg-slate-100 transition-colors">
@@ -212,71 +233,78 @@ export default function FlightsPage() {
                     </div>
 
                     <div className="space-y-4">
-                        {FLIGHTS.map((flight) => (
-                            <motion.div
-                                key={flight.id}
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                className="bg-white rounded-3xl p-6 border border-slate-200 hover:shadow-xl hover:border-blue-300 transition-all duration-300"
-                            >
-                                <div className="flex items-center justify-between mb-6">
-                                    <div className="flex items-center space-x-4">
-                                        <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-emerald-500 rounded-2xl flex items-center justify-center">
-                                            <img
-                                                src={flight.logo}
-                                                alt={flight.airline}
-                                                className="w-12 h-12 rounded-lg"
-                                                onError={(e) => {
-                                                    e.currentTarget.src = 'https://ui-avatars.com/api/?name=' + flight.airline.replace(/ /g, '+') + '&background=4285f4&color=fff&size=128&bold=true';
-                                                }}
-                                            />
+                        {loading ? (
+                            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+                                {Array(9).fill(0).map((_, i) => (
+                                    <SkeletonLoader key={i} className="h-80 rounded-3xl" />
+                                ))}
+                            </div>
+                        ) : flights.length > 0 ? (
+                            flights.map((flight: any) => (
+                                <motion.div
+                                    key={flight.id}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    className="bg-white rounded-3xl p-6 border border-slate-200 hover:shadow-xl hover:border-blue-300 transition-all duration-300"
+                                >
+                                    <div className="flex items-center justify-between mb-6">
+                                        <div className="flex items-center space-x-4">
+                                            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-emerald-500 rounded-2xl flex items-center justify-center">
+                                                <img
+                                                    src={flight.logo}
+                                                    alt={flight.airline}
+                                                    className="w-12 h-12 rounded-lg"
+                                                    onError={(e) => {
+                                                        e.currentTarget.src = 'https://ui-avatars.com/api/?name=' + flight.airline.replace(/ /g, '+') + '&background=4285f4&color=fff&size=128&bold=true';
+                                                    }}
+                                                />
+                                            </div>
+                                            <div>
+                                                <h3 className="font-bold text-xl text-slate-900">{flight.airline}</h3>
+                                                <p className="text-slate-500">{flight.cabin}</p>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <h3 className="font-bold text-xl text-slate-900">{flight.airline}</h3>
-                                            <p className="text-slate-500">{flight.cabin}</p>
+                                        <div className="text-right">
+                                            <div className="text-3xl font-black text-emerald-600 mb-1">
+                                                ${flight.priceUSD.toLocaleString()}
+                                            </div>
+                                            <div className="text-slate-500 text-sm">
+                                                {flight.priceTZS.toLocaleString()} TZS
+                                            </div>
                                         </div>
                                     </div>
-                                    <div className="text-right">
-                                        <div className="text-3xl font-black text-emerald-600 mb-1">
-                                            ${flight.priceUSD.toLocaleString()}
-                                        </div>
-                                        <div className="text-slate-500 text-sm">
-                                            {flight.priceTZS.toLocaleString()} TZS
-                                        </div>
-                                    </div>
-                                </div>
 
-                                <div className="grid md:grid-cols-3 gap-8 items-center mb-6 p-6 bg-slate-50 rounded-2xl">
-                                    <div className="text-center">
-                                        <div className="text-2xl font-bold text-slate-900">{flight.from}</div>
-                                        <div className="text-sm text-slate-500 mb-4">{flight.departureTime}</div>
-                                        <div className="mx-auto w-24 h-px bg-slate-300" />
-                                    </div>
-                                    <div className="text-center">
-                                        <div className="text-lg font-bold text-slate-700">{flight.duration}</div>
-                                        <div className="text-sm text-slate-500 flex items-center justify-center space-x-1">
-                                            <Plane className="w-4 h-4" />
-                                            <span>Direct</span>
+                                    <div className="grid md:grid-cols-3 gap-8 items-center mb-6 p-6 bg-slate-50 rounded-2xl">
+                                        <div className="text-center">
+                                            <div className="text-2xl font-bold text-slate-900">{flight.from}</div>
+                                            <div className="text-sm text-slate-500 mb-4">{flight.departureTime}</div>
+                                            <div className="mx-auto w-24 h-px bg-slate-300" />
+                                        </div>
+                                        <div className="text-center">
+                                            <div className="text-lg font-bold text-slate-700">{flight.duration}</div>
+                                            <div className="text-sm text-slate-500 flex items-center justify-center space-x-1">
+                                                <Plane className="w-4 h-4" />
+                                                <span>Direct</span>
+                                            </div>
+                                        </div>
+                                        <div className="text-center">
+                                            <div className="text-2xl font-bold text-slate-900">{flight.to}</div>
+                                            <div className="text-sm text-slate-500">{flight.arrivalTime}</div>
                                         </div>
                                     </div>
-                                    <div className="text-center">
-                                        <div className="text-2xl font-bold text-slate-900">{flight.to}</div>
-                                        <div className="text-sm text-slate-500">{flight.arrivalTime}</div>
-                                    </div>
-                                </div>
 
-                                <div className="flex space-x-4">
-                                    <Button asChild size="lg" className="flex-1">
-                                        <Link href="/tourism/flights/select" className="w-full">
-                                            Select Flight →
-                                        </Link>
-                                    </Button>
-                                    <Button variant="outline" size="lg" className="px-6">
-                                        Details
-                                    </Button>
-                                </div>
-                            </motion.div>
-                        ))}
+                                    <div className="flex space-x-4">
+                                        <Button asChild size="lg" className="flex-1">
+                                            <Link href="/tourism/flights/select" className="w-full">
+                                                Select Flight →
+                                            </Link>
+                                        </Button>
+                                        <Button variant="outline" size="lg" className="px-6">
+                                            Details
+                                        </Button>
+                                    </div>
+                                </motion.div>
+                            ))}
                     </div>
                 </div>
             </section>

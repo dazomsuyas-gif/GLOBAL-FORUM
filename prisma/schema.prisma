@@ -1,0 +1,105 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  email         String    @unique
+  password      String?
+  name          String
+  phone         String?
+  image         String?
+  emailVerified DateTime?
+  role          Role      @default(USER)
+  accounts      Account[]
+  sessions      Session[]
+  products      Product[]
+  orders        Order[]
+  reviews       Review[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Account {
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String  @db.ObjectId
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@map("_Account")
+}
+
+model Session {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  sessionToken String   @unique
+  userId       String   @db.ObjectId
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@map("_Session")
+}
+
+model Product {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  slug        String   @unique
+  description String
+  priceUSD    Float
+  priceTZS    Float
+  images      String[]
+  category    String
+  stock       Int
+  sellerId    String   @db.ObjectId
+  seller      User     @relation(fields: [sellerId], references: [id])
+  orders      Order[]
+  reviews     Review[]
+  isPromoted  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  @@map("_Product")
+}
+
+model Order {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  orderNumber     String   @unique
+  userId          String   @db.ObjectId
+  user            User     @relation(fields: [userId], references: [id])
+  products        Json
+  totalUSD        Float
+  totalTZS        Float
+  status          String   @default("pending")
+  paymentMethod   String
+  deliveryAddress Json
+  createdAt       DateTime @default(now())
+  @@map("_Order")
+}
+
+model Review {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  rating    Int
+  comment   String
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id])
+  productId String   @db.ObjectId
+  product   Product  @relation(fields: [productId], references: [id])
+  createdAt DateTime @default(now())
+  @@map("_Review")
+}
+
+enum Role {
+  USER
+  SELLER
+  ADMIN
+}
+

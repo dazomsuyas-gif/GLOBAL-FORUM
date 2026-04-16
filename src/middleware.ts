@@ -1,41 +1,45 @@
 import { NextRequest, NextResponse } from 'next/server';
 import type { NextMiddleware } from 'next/server';
+import { getToken } from "next-auth/jwt";
 
 const middleware: NextMiddleware = async (request: NextRequest) => {
     const pathname = request.nextUrl.pathname;
 
-    // Admin routes protection
-    if (pathname.startsWith('/admin')) {
-        const adminToken = request.cookies.get('adminToken')?.value || localStorage.getItem('adminToken');
+    // Protected routes
+    const protectedPaths = ['/admin', '/dashboard', '/marketplace/seller'];
+    const isProtected = protectedPaths.some(path => pathname.startsWith(path));
 
-        if (!adminToken && pathname !== '/admin/login') {
-            const loginUrl = new URL('/admin/login', request.url);
-            return NextResponse.redirect(loginUrl);
-        }
+    if (isProtected) {
+        try {
+            const token = await getToken({ req: request });
+            if (!token && !pathname.includes('/login') && !pathname.includes('/signin')) {
+                const signinUrl = new URL('/auth/signin', request.url);
+                signinUrl.searchParams.set('callbackUrl', pathname);
+                return NextResponse.redirect(signinUrl);
+            }
 
-        // Verify token (mock validation)
-        if (adminToken !== 'mock-admin-token' && pathname !== '/admin/login') {
-            const loginUrl = new URL('/admin/login', request.url);
-            return NextResponse.redirect(loginUrl);
-        }
-
-        // Role-based access for super admin only routes (example)
-        const adminUser = request.cookies.get('adminUser')?.value;
-        const superAdminPaths = ['/admin/settings/admins'];
-        if (superAdminPaths.some(path => pathname.startsWith(path)) && adminUser && !adminUser.includes('Super Admin')) {
-            const loginUrl = new URL('/admin/dashboard', request.url);
-            return NextResponse.redirect(loginUrl);
+            // Admin role check
+            if (pathname.startsWith('/admin') && token?.role !== 'ADMIN') {
+                const dashboardUrl = new URL('/dashboard', request.url);
+                return NextResponse.redirect(dashboardUrl);
+            }
+        } catch (error) {
+            const signinUrl = new URL('/auth/signin', request.url);
+            return NextResponse.redirect(signinUrl);
         }
     }
 
     return NextResponse.next();
 };
 
+
 export default middleware;
 
 export const config = {
     matcher: [
         '/admin/:path*',
+        '/dashboard/:path*',
+        '/marketplace/seller/:path*',
         '/api/admin/:path*'
     ]
 };

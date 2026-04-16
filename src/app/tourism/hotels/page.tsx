@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { SkeletonLoader } from '@/components/ui/SkeletonLoader';
 import { motion } from 'framer-motion';
 import { Bed, Calendar, User } from 'lucide-react';
 import Link from 'next/link';
@@ -152,7 +153,7 @@ export default function HotelsPage() {
                                             />
                                             <div className="absolute top-4 left-4">
                                                 <span className={`px-3 py-1 rounded-full text-xs font-bold ${hotel.category === 'Luxury' ? 'bg-gradient-to-r from-rose-500 to-orange-500 text-white' :
-                                                        hotel.category === 'Mid-range' ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white' : 'bg-gradient-to-r from-slate-500 to-slate-600 text-white'
+                                                    hotel.category === 'Mid-range' ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white' : 'bg-gradient-to-r from-slate-500 to-slate-600 text-white'
                                                     }`}>
                                                     {hotel.category}
                                                 </span>
