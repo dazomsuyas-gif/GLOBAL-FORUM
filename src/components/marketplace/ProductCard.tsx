@@ -4,10 +4,8 @@ import { motion } from 'framer-motion';
 import { Heart, ShoppingCart, Star, Crown, TrendingUp, MapPin, User } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Product } from '@/data/marketplaceData';
-
 interface ProductCardProps {
-    product: Product;
+    product: any; // Mock data type
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
@@ -70,8 +68,8 @@ export default function ProductCard({ product }: ProductCardProps) {
                                 key={idx}
                                 onClick={() => setImageIndex(idx)}
                                 className={`flex-1 h-2 rounded-full transition-all ${idx === imageIndex
-                                        ? 'bg-emerald-400 shadow-lg scale-125'
-                                        : 'bg-white/30 hover:bg-white/50'
+                                    ? 'bg-emerald-400 shadow-lg scale-125'
+                                    : 'bg-white/30 hover:bg-white/50'
                                     }`}
                             />
                         ))}
@@ -86,10 +84,10 @@ export default function ProductCard({ product }: ProductCardProps) {
                 </div>
                 <div>
                     <div className="font-bold text-white text-lg">Tech World TZ</div>
-                    <div className="flex items-center gap-1 text-emerald-400">
-                        <Star className="w-4 h-4 fill-current" />
-                        <span className="font-bold">{product.rating.toFixed(1)}</span>
-                        <span className="text-white/60 text-sm">({product.reviewCount})</span>
+                    <div className="flex items-center gap-1">
+                        <span className="text-yellow-400 text-xl">★★★★★</span>
+                        <span className="font-bold text-emerald-400">4.9</span>
+                        <span className="text-white/60 text-sm">(127)</span>
                     </div>
                 </div>
             </div>
@@ -101,10 +99,10 @@ export default function ProductCard({ product }: ProductCardProps) {
                 </h3>
                 <div className="flex items-center gap-2 mb-4">
                     <div className={`px-3 py-1 rounded-full text-xs font-bold ${product.condition === 'New'
-                            ? 'bg-emerald-500 text-white'
-                            : product.condition === 'Refurbished'
-                                ? 'bg-blue-500 text-white'
-                                : 'bg-orange-500 text-white'
+                        ? 'bg-emerald-500 text-white'
+                        : product.condition === 'Refurbished'
+                            ? 'bg-blue-500 text-white'
+                            : 'bg-orange-500 text-white'
                         }`}>
                         {product.condition}
                     </div>
@@ -165,7 +163,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
             {/* Quick Link */}
             <Link
-                href={`/marketplace/product/${product.slug}`}
+                href={`/marketplace/product/${product.id}`}
                 className="text-emerald-400 font-bold text-sm uppercase tracking-wide flex items-center gap-2 group-hover:text-emerald-300 transition-colors"
             >
                 View Details
