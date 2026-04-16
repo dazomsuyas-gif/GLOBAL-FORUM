@@ -12,6 +12,7 @@ const Navbar: React.FC<{}> = () => {
         { name: 'Marketplace', href: '/marketplace' },
         { name: 'Community', href: '/community' },
         { name: 'Creator', href: '/creator' },
+        { name: 'Dashboard', href: '/dashboard' },
         { name: 'About', href: '/about' },
         { name: 'Contact', href: '/contact' },
     ];
