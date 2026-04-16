@@ -1,0 +1,170 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --gold-glow: 0 0 20px 0 rgba(201, 168, 76, 0.6);
+    }
+}
+
+@layer base {
+    html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 8rem;
+    }
+
+    body {
+        @apply bg-gradient-to-br from-slate-900 via-slate-900 to-navy text-white antialiased;
+        font-feature-settings: 'rlig' 1, 'calt' 1;
+    }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+::-webkit-scrollbar-track {
+    @apply bg-slate-800/50 rounded-full;
+}
+
+::-webkit-scrollbar-thumb {
+    @apply bg-gold rounded-full border-4 border-slate-900 hover:bg-gold-bright transition-all duration-200;
+}
+
+/* Gold Cursor */
+.gold-cursor {
+    position: fixed;
+    width: 20px;
+    height: 20px;
+    background: radial-gradient(circle closest-side, #FFD700 50%, transparent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 99999;
+    mix-blend-mode: difference;
+    transition: transform 0.1s ease-out;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+}
+
+.gold-cursor-follower {
+    position: fixed;
+    width: 40px;
+    height: 40px;
+    border: 2px solid #C9A84C;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    mix-blend-mode: difference;
+    transition: all 0.2s ease-out;
+    opacity: 0.5;
+}
+
+@layer components {
+    .glass-card {
+        @apply backdrop-blur-xl bg-white/5 border border-white/20 rounded-3xl p-8 shadow-2xl hover:shadow-glow-gold transition-all duration-500;
+    }
+
+    .glass-card:hover {
+        transform: translateY(-8px);
+    }
+
+    .btn-gold {
+        @apply bg-gradient-to-r from-gold to-gold-bright text-navy px-8 py-4 rounded-full font-semibold text-lg shadow-lg hover:shadow-glow-gold hover:scale-105 hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-gold hover:bg-transparent hover:text-gold;
+    }
+
+    .btn-glass {
+        @apply glass-card px-8 py-4 rounded-full font-semibold text-lg border-2 border-white/30 hover:border-gold hover:bg-white/10 hover:shadow-glow-gold hover:scale-105 transition-all duration-300;
+    }
+
+    .section-title {
+        @apply text-4xl md:text-6xl font-black bg-gradient-to-r from-gold via-yellow-400 to-orange-400 bg-clip-text text-transparent mb-12 tracking-tight;
+    }
+
+    .hero-gradient {
+        background: linear-gradient(135deg, #0A1628 0%, #1E3A8A 25%, #1E40AF 50%, #3730A3 75%, #581C87 100%);
+        background-size: 400% 400%;
+        animation: gradient 15s ease infinite;
+    }
+
+    .lang-card {
+        @apply glass-card p-8 text-center hover:scale-105 transition-all duration-500 border-2 border-transparent hover:border-gold hover:shadow-glow-gold group;
+    }
+}
+
+/* Animations */
+@keyframes gradient {
+
+    0%,
+    100% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+@keyframes glow {
+
+    0%,
+    100% {
+        box-shadow: 0 0 20px rgba(201, 168, 76, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 0 40px rgba(201, 168, 76, 0.6);
+    }
+}
+
+.animate-float {
+    animation: float 6s ease-in-out infinite;
+}
+
+.animate-pulse {
+    animation: glow 2s ease-in-out infinite;
+}
+
+.animate-spin-slow {
+    animation: spin 20s linear infinite;
+}
+
+/* Glass Morphism */
+.glass {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+
+    .gold-cursor,
+    .gold-cursor-follower {
+        display: none;
+    }
+}
+
+/* Utility Classes */
+.text-gold-gradient {
+    background: linear-gradient(135deg, #C9A84C, #FFD700);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.shadow-gold-glow {
+    box-shadow: 0 25px 50px -12px rgba(201, 168, 76, 0.25);
+}
