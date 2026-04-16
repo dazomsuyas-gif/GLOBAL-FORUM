@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '../../auth/[...nextauth]/route'
 import { sendEmail } from '@/lib/email'
+import { sendSMS } from '@/lib/sms'
 
 export async function PUT(
     request: NextRequest,
@@ -22,12 +23,17 @@ export async function PUT(
             include: { user: true, order: true }
         })
 
-        // User email notification
+        // User notifications
         // await sendEmail({
         //   to: dispute.user.email,
         //   subject: `Dispute ${dispute.disputeNumber} Resolved`,
         //   html: `Status: ${status}. Resolution: ${resolution}. Notes: ${adminNotes}`
         // })
+
+        if (status === 'resolved' && dispute.user.phone) {
+            const message = `📋 Your dispute #${dispute.disputeNumber} has been resolved. Resolution: ${resolution}. Contact support if needed.`;
+            await sendSMS(dispute.user.phone, message);
+        }
 
         // Stub refund
         if (status === 'resolved' && resolution === 'refund_issued') {

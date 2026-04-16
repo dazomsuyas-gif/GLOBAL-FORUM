@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '../auth/[...nextauth]/route'
 import { sendEmail } from '@/lib/email'
+import { sendAdminAlert } from '@/lib/sms'
 
 export async function POST(request: NextRequest) {
     try {
@@ -64,8 +65,13 @@ export async function POST(request: NextRequest) {
             include: { order: true }
         })
 
-        // Admin email notification
+        // Admin notifications
         // await sendEmail({ to: 'admin@globalforum.com', subject: `New Dispute ${disputeNumber}`, html: `...` })
+        await sendAdminAlert('new_dispute', {
+            disputeNumber: dispute.disputeNumber,
+            orderNumber: dispute.order.orderNumber,
+            reason: dispute.reason
+        });
 
         return NextResponse.json(dispute, { status: 201 })
     } catch (error) {

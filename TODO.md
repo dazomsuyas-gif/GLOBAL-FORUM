@@ -1,40 +1,14 @@
-# PART 8: Dispute Resolution - Implementation Steps
+# SMS Alerts Implementation (PART 10)
 
-## 1. Database Schema
+## Steps
 
-- [x] Update prisma/schema.prisma (Dispute model + relations)
-- [x] Run `npx prisma db push`
+- [x] 1. Install twilio: npm install twilio
+- [x] 2. Create src/lib/sms.ts (Twilio setup, sendSMS, sendAdminAlert)
+- [x] 3. Create src/lib/inventory.ts (decrementStockAndAlert, restoreStock)
+- [x] 4. Update src/app/api/payments/create-payment/route.ts (add SMS + stock after create, restore in catch)
+- [x] 5. Update src/app/api/disputes/create/route.ts (add admin alert)
+- [x] 6. Update src/app/api/disputes/[id]/route.ts (add customer SMS on resolve)
+- [x] 7. Create src/app/api/orders/update-status/route.ts (PUT status change + customer SMS)
+- [ ] 8. Test: create order, check SMS/logs, disputes, status update
 
-## 2. API Routes
-
-- [x] Create src/app/api/disputes/list/route.ts (GET)
-- [x] Create src/app/api/disputes/create/route.ts (POST)
-- [x] Create src/app/api/disputes/[id]/route.ts (PUT for update)
-
-## 3. Components
-
-- [x] src/components/disputes/DisputeStatusBadge.tsx
-- [x] src/components/disputes/DisputeTimeline.tsx
-
-## 4. User Pages
-
-- [x] src/app/disputes/new/page.tsx (file dispute form)
-- [x] src/app/disputes/[id]/page.tsx (detail view)
-- [x] src/app/dashboard/orders/page.tsx (create w/ Report Issue buttons)
-
-## 5. Admin Pages
-
-- [x] src/app/admin/disputes/page.tsx (management table)
-- [x] Update src/app/admin/layout.tsx (add nav link)
-- [x] Update src/app/admin/dashboard/page.tsx (pending count card)
-
-## 6. Data & Integration
-
-- [x] Update src/data/adminData.ts (mock pendingDisputes)
-
-## 7. Testing
-
-- [ ] Test flow: file dispute → admin review → resolve
-- [ ] Add to Navbar admin link (role check)
-
-Proceed step-by-step.
+Progress: All features implemented. Run tests (step 8).

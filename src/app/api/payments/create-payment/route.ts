@@ -5,6 +5,8 @@ import { createPayPalOrder } from '@/lib/payments/paypal';
 import { createNalaPayment } from '@/lib/payments/nalaMoney';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]/route';
+import { sendAdminAlert } from '@/lib/sms';
+import { decrementStockAndAlert, restoreStock } from '@/lib/inventory';
 
 export async function POST(req: NextRequest) {
     try {
@@ -31,6 +33,16 @@ export async function POST(req: NextRequest) {
                 status: 'pending',
             },
         });
+
+        const customerEmail = session.user.email ?? 'unknown@example.com';
+
+        // Send admin alert and handle inventory
+        await sendAdminAlert('new_order', {
+            orderNumber: order.orderNumber,
+            total: order.totalUSD,
+            customerEmail
+        });
+        await decrementStockAndAlert(products);
 
         let paymentData;
 
@@ -59,6 +71,9 @@ export async function POST(req: NextRequest) {
         });
     } catch (error) {
         console.error('Payment creation error:', error);
+        if (products) {
+            await restoreStock(products);
+        }
         return NextResponse.json({ error: 'Payment creation failed' }, { status: 500 });
     }
 }
