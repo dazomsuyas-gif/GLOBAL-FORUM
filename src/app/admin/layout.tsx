@@ -10,6 +10,7 @@ const sidebarNav = [
     { name: 'Content', href: '/admin/content', icon: FileText },
     { name: 'Language Academy', href: '/admin/languages', icon: BookOpen },
     { name: 'Marketplace', href: '/admin/marketplace', icon: ShoppingBag },
+    { name: 'Disputes', href: '/admin/disputes', icon: AlertTriangle },
     { name: 'Community', href: '/admin/community', icon: Users2 },
     { name: 'Payments', href: '/admin/payments', icon: DollarSign },
     { name: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
@@ -76,8 +77,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                                 key={item.href}
                                 href={item.href}
                                 className={`glass-card flex items-center gap-4 p-6 rounded-3xl group hover:shadow-glow-emerald transition-all border-2 ${isActive
-                                        ? 'border-emerald-400/50 bg-emerald-500/10 shadow-emerald-500/25 text-emerald-400'
-                                        : 'border-slate-800 hover:border-emerald-400/30 hover:bg-emerald-500/5'
+                                    ? 'border-emerald-400/50 bg-emerald-500/10 shadow-emerald-500/25 text-emerald-400'
+                                    : 'border-slate-800 hover:border-emerald-400/30 hover:bg-emerald-500/5'
                                     }`}
                             >
                                 <Icon className={`w-8 h-8 ${isActive ? 'text-emerald-400' : 'text-slate-400 group-hover:text-emerald-400 transition-colors'}`} />

@@ -83,6 +83,7 @@ export default function AdminDashboard() {
                     { title: 'Articles Published', value: stats.totalArticles.toLocaleString(), growth: '+15%', icon: FileText, color: 'indigo' },
                     { title: 'Stories Live', value: stats.totalStories.toLocaleString(), growth: '+8%', icon: BookOpen, color: 'pink' },
                     { title: 'Languages Active', value: stats.activeLanguages.toString(), growth: '0%', icon: Globe, color: 'green' },
+                    { title: 'Pending Disputes', value: stats.pendingDisputes?.toString() || '0', growth: '+12%', icon: AlertCircle, color: 'orange' },
                     { title: 'Pending Reviews', value: stats.pendingReviews.toString(), growth: '+3%', icon: AlertCircle, color: 'red' },
                 ].map((stat, index) => (
                     <motion.div
@@ -202,9 +203,9 @@ export default function AdminDashboard() {
                                 <div className="text-right">
                                     <p className="font-bold text-2xl text-emerald-400">{order.amount}</p>
                                     <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold ${order.status === 'Delivered' ? 'bg-emerald-500/20 text-emerald-400' :
-                                            order.status === 'Shipped' ? 'bg-blue-500/20 text-blue-400' :
-                                                order.status === 'Processing' ? 'bg-yellow-500/20 text-yellow-400' :
-                                                    'bg-slate-500/20 text-slate-400'
+                                        order.status === 'Shipped' ? 'bg-blue-500/20 text-blue-400' :
+                                            order.status === 'Processing' ? 'bg-yellow-500/20 text-yellow-400' :
+                                                'bg-slate-500/20 text-slate-400'
                                         }`}>
                                         {order.status}
                                     </span>

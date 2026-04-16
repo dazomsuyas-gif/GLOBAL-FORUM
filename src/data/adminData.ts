@@ -23,6 +23,7 @@ export const adminData = {
         totalStories: 89,
         activeLanguages: 6,
         pendingReviews: 12,
+        pendingDisputes: 8,
     },
     revenueMonthly: [
         { month: 'Oct 2024', revenue: 245670000 },

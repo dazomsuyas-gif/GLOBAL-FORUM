@@ -1,46 +1,40 @@
-# Seller Rating & Review System - PART 7 TODO
+# PART 8: Dispute Resolution - Implementation Steps
 
-## Plan Overview
+## 1. Database Schema
 
-Implemented iteratively based on approved plan. Track progress here.
+- [x] Update prisma/schema.prisma (Dispute model + relations)
+- [x] Run `npx prisma db push`
 
-## Steps
+## 2. API Routes
 
-### 1. Update Prisma Schema (prisma/schema.prisma)
+- [x] Create src/app/api/disputes/list/route.ts (GET)
+- [x] Create src/app/api/disputes/create/route.ts (POST)
+- [x] Create src/app/api/disputes/[id]/route.ts (PUT for update)
 
-- [ ] Add to User model: `sellerRating Float? @default(0)`, `reviewCount Int? @default(0)`, `reviewsReceived Review[] @relation("ReviewsReceived")`
-- [ ] Add to Review model: `sellerId String @db.ObjectId`, `seller User @relation(fields: [sellerId], references: [id])`
-- [ ] Run `npx prisma db push`
-- [ ] Run `npx prisma generate`
+## 3. Components
 
-### 2. Create Base Pages
+- [x] src/components/disputes/DisputeStatusBadge.tsx
+- [x] src/components/disputes/DisputeTimeline.tsx
 
-✅ src/app/marketplace/product/[productId]/page.tsx (product details + reviews tab)
-✅ src/app/marketplace/seller/[sellerId]/page.tsx (seller store)
-✅ src/app/marketplace/seller/[sellerId]/reviews/page.tsx (seller reviews list)
+## 4. User Pages
 
-**Next: Step 3 - Create Components**
+- [x] src/app/disputes/new/page.tsx (file dispute form)
+- [x] src/app/disputes/[id]/page.tsx (detail view)
+- [x] src/app/dashboard/orders/page.tsx (create w/ Report Issue buttons)
 
-### 3. Create Components
+## 5. Admin Pages
 
-- [ ] src/components/marketplace/SellerRating.tsx
-- [ ] src/components/marketplace/ReviewModal.tsx (with StarRating)
+- [x] src/app/admin/disputes/page.tsx (management table)
+- [x] Update src/app/admin/layout.tsx (add nav link)
+- [x] Update src/app/admin/dashboard/page.tsx (pending count card)
 
-### 4. Create API Routes
+## 6. Data & Integration
 
-✅ src/app/api/reviews/create/route.ts (POST create + update avgs, purchase validation, avg update)
-✅ src/app/api/reviews/get/route.ts (GET paginated by seller/product, stats)
+- [x] Update src/data/adminData.ts (mock pendingDisputes)
 
-**Next: Step 5 - Update Existing**
+## 7. Testing
 
-### 5. Update Existing
+- [ ] Test flow: file dispute → admin review → resolve
+- [ ] Add to Navbar admin link (role check)
 
-- [ ] src/components/marketplace/ProductCard.tsx (use real SellerRating)
-- [ ] Integrate into product/seller pages
-
-### 6. Test & Complete
-
-- [ ] Test full flow: order -> review -> avgs update
-- [ ] attempt_completion
-
-**Current Progress: Starting Step 1**
+Proceed step-by-step.
