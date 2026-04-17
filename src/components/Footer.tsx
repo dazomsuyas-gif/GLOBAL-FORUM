@@ -48,10 +48,15 @@ const Footer: React.FC<{}> = () => {
                         <ul className="space-y-3">
                             <li><Link href="/" className="text-gray-400 hover:text-white transition-colors">Home</Link></li>
                             <li><Link href="/knowledge" className="text-gray-400 hover:text-white transition-colors">Knowledge</Link></li>
+                            <li><Link href="/politics-history" className="text-gray-400 hover:text-white transition-colors">Politics & History</Link></li>
+                            <li><Link href="/economics-education-realestate" className="text-gray-400 hover:text-white transition-colors">Econ/Edu/RE</Link></li>
+                            <li><Link href="/sports-entertainment-health" className="text-gray-400 hover:text-white transition-colors">Sports/Ent/Health</Link></li>
+                            <li><Link href="/technology-science" className="text-gray-400 hover:text-white transition-colors">Tech & Science</Link></li>
                             <li><Link href="/tourism" className="text-gray-400 hover:text-white transition-colors">Tourism ✈️</Link></li>
                             <li><Link href="/marketplace" className="text-gray-400 hover:text-white transition-colors">Marketplace</Link></li>
                             <li><Link href="/community" className="text-gray-400 hover:text-white transition-colors">Community</Link></li>
                             <li><Link href="/about" className="text-gray-400 hover:text-white transition-colors">About</Link></li>
+
                         </ul>
                     </div>
 
