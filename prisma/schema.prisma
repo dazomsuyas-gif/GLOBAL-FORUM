@@ -1,0 +1,218 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  username  String   @unique
+  image     String?
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  posts     Post[]
+  reviews   Review[]
+  orders    Order[]
+  groups    GroupMember[]
+  messages  Message[] @relation("UserSentMessages")
+  receivedMessages Message[] @relation("UserReceivedMessages")
+  sellerReviews SellerReview[]
+
+  @@map("users")
+}
+
+model Post {
+  id        String   @id @default(uuid())
+  title     String
+  content   String
+  authorId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  author    User     @relation(fields: [authorId], references: [id])
+  comments  Comment[]
+
+  @@map("posts")
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  content   String
+  authorId  String
+  postId    String
+  createdAt DateTime @default(now())
+
+  author    User     @relation(fields: [authorId], references: [id])
+  post      Post     @relation(fields: [postId], references: [id])
+
+  @@map("comments")
+}
+
+model Group {
+  id        String   @id @default(uuid())
+  name      String
+  description String?
+  createdAt DateTime @default(now())
+  creatorId String
+
+  creator   User     @relation(fields: [creatorId], references: [id])
+  members   GroupMember[]
+  messages  Message[]
+
+  @@map("groups")
+}
+
+model GroupMember {
+  id     String @id @default(uuid())
+  userId String
+  groupId String
+  role   GroupRole @default(MEMBER)
+  joinedAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id])
+  group Group @relation(fields: [groupId], references: [id])
+
+  @@unique([userId, groupId])
+  @@map("group_members")
+}
+
+model Message {
+  id          String   @id @default(uuid())
+  content     String
+  senderId    String
+  receiverId  String?
+  groupId     String?
+  createdAt   DateTime @default(now())
+  readAt      DateTime?
+
+  sender      User     @relation("UserSentMessages", fields: [senderId], references: [id])
+  receiver    User?    @relation("UserReceivedMessages", fields: [receiverId], references: [id])
+  group       Group?   @relation(fields: [groupId], references: [id])
+
+  @@map("messages")
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  price       Float
+  image       String?
+  stock       Int      @default(0)
+  sellerId    String
+  createdAt   DateTime @default(now())
+
+  seller      User     @relation(fields: [sellerId], references: [id])
+  reviews     Review[]
+  orderItems  OrderItem[]
+
+  @@map("products")
+}
+
+model Review {
+  id         String   @id @default(uuid())
+  rating     Int
+  comment    String?
+  userId     String
+  productId  String
+  createdAt  DateTime @default(now())
+
+  user       User     @relation(fields: [userId], references: [id])
+  product    Product  @relation(fields: [productId], references: [id])
+
+  @@map("reviews")
+}
+
+model Order {
+  id        String      @id @default(uuid())
+  status    OrderStatus @default(PENDING)
+  total     Float
+  userId    String
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  user      User        @relation(fields: [userId], references: [id])
+  items     OrderItem[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id        String @id @default(uuid())
+  quantity  Int
+  price     Float
+  orderId   String
+  productId String
+
+  order     Order  @relation(fields: [orderId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
+
+  @@map("order_items")
+}
+
+model SellerReview {
+  id        String   @id @default(uuid())
+  rating    Int
+  comment   String?
+  buyerId   String
+  sellerId  String
+  createdAt DateTime @default(now())
+
+  buyer     User @relation("buyerReviews", fields: [buyerId], references: [id])
+  seller    User @relation(fields: [sellerId], references: [id])
+
+  @@map("seller_reviews")
+}
+
+model Dispute {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  status      DisputeStatus @default(OPEN)
+  userId      String
+  orderId     String?
+  createdAt   DateTime @default(now())
+  resolvedAt  DateTime?
+
+  user        User    @relation(fields: [userId], references: [id])
+  order       Order?  @relation(fields: [orderId], references: [id])
+
+  @@map("disputes")
+}
+
+enum Role {
+  USER
+  ADMIN
+  MODERATOR
+}
+
+enum GroupRole {
+  MEMBER
+  MOD
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum DisputeStatus {
+  OPEN
+  IN_REVIEW
+  RESOLVED
+  CLOSED
+}
